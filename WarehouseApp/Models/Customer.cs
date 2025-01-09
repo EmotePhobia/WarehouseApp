@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WarehouseApp.Models
 {
-    public class Customer
+    public class Customer : IdentityUser
     {
         [Column(TypeName = "varchar(100)")]
         [Required]
