@@ -15,13 +15,13 @@ namespace WarehouseApp.Models
         [Required]
         public string LastName { get; set; }
 
-        [Required]
+        
         [Column(TypeName = "nvarchar(100)")]
         public string? Country { get; set; }
-        [Required]
+        
         [Column(TypeName = "nvarchar(100)")]
         public string? City { get; set; }
-        [Required]
+        
         [Column(TypeName = "nvarchar(150)")]
         public string? Address { get; set; }
 

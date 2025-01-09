@@ -19,5 +19,6 @@ namespace WarehouseApp.Models
         [Column(TypeName = "nvarchar(255)")]
         [StringLength(255, ErrorMessage = "Max 255 characters.")]
         public string Description { get; set; }
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

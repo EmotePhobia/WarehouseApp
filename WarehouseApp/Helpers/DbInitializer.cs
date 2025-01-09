@@ -20,10 +20,10 @@ namespace WarehouseApp.Helpers
             }
 
             var adminEmail = "admin@admin.com";
-            var adminPassword = "admin";
+            var adminPassword = "ZAQ!2wsx";
             if (userManager.FindByEmailAsync(adminEmail).Result == null)
             {
-                var adminUser = new Customer { UserName = adminEmail, Email = adminEmail, FirstName = "Admin", LastName = "Admin" };
+                var adminUser = new Customer {UserName = adminEmail, Email = adminEmail, FirstName = "Admin", LastName = "Admin" };
                 var result = userManager.CreateAsync(adminUser, adminPassword).Result;
                 if (result.Succeeded)
                 {

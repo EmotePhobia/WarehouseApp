@@ -30,8 +30,8 @@ namespace WarehouseApp.Models
 
         [Required]
         [ForeignKey("User")]
-        public int UserId { get; set; }
-        // public User User { get; set; }
+        public string UserId { get; set; }
+        public Customer IdentityUser { get; set; }
 
         public ICollection<OrderItem> OrderItems { get; set; }
     }

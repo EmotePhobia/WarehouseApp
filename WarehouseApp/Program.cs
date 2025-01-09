@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using WarehouseApp.Data;
+using WarehouseApp.Helpers;
 using WarehouseApp.Models;
+
 namespace WarehouseApp
 {
     public class Program
@@ -23,10 +27,18 @@ namespace WarehouseApp
 
             builder.Services.AddRazorPages();
 
+            builder.Services.AddSingleton<IEmailSender, EmailSender>();
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                DbInitializer.SeedRolesAndUsers(services);
+            }
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -40,7 +52,7 @@ namespace WarehouseApp
             app.UseStaticFiles();
 
             app.UseRouting();
-           
+
             app.UseAuthorization();
             app.MapRazorPages();
 
