@@ -1,0 +1,39 @@
+﻿@model IEnumerable<WarehouseApp.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+}
+@if (!User.IsInRole("User"))
+{
+    <p display="none">Sign in to place your order </p>
+}
+@if (User.IsInRole("User")){
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+
+<h1>Your Orders</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Order Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.OrderDate</td>
+                <td>@order.Status</td>
+                <td>
+                    <a href="@Url.Action("Details", "Orders", new { id = order.OrderId })">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+}

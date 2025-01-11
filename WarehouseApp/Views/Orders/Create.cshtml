@@ -1,0 +1,37 @@
+﻿@model WarehouseApp.Models.Order
+
+@{
+    ViewData["Title"] = "Create Order";
+}
+
+<h1>Create Order</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="OrderDate">Order Date</label>
+        <input type="datetime-local" class="form-control" asp-for="OrderDate" />
+    </div>
+
+    <div id="order-items">
+        <div id="order-items-list">
+            @for (int i = 0; i < Model.OrderItems.Count; i++)
+            {
+                <div class="form-group">
+                    <label for="OrderItems[@i].ProductId">Produkt</label>
+                    <select asp-for="OrderItems[@i].ProductId" class="form-control" asp-items="ViewBag.Products">
+                        <option value="">Wybierz produkt</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="OrderItems[@i].Quantity">Ilość</label>
+                    <input type="number" class="form-control" asp-for="OrderItems[@i].Quantity" min="1" />
+                </div>
+            }
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Złóż zamówienie</button>
+        </div>
+    </div>
+</form>

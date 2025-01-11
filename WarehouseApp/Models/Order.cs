@@ -33,6 +33,8 @@ namespace WarehouseApp.Models
         public string UserId { get; set; }
         public Customer IdentityUser { get; set; }
 
-        public ICollection<OrderItem> OrderItems { get; set; }
+        public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalAmount { get; set; }
     }
 }

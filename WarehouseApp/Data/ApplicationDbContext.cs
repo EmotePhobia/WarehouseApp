@@ -24,7 +24,7 @@
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.IdentityUser)
                 .WithMany(c => c.Orders)
-                .HasForeignKey(o => o.IdentityUser)
+                .HasForeignKey(o => o.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Relacja między Product a Category
@@ -35,20 +35,20 @@
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Relacja między OrderItem i Order
-            modelBuilder.Entity<OrderItem>()
-                .HasOne(oi => oi.Order)
-                .WithMany(o => o.OrderItems)
-                .HasForeignKey(oi => oi.OrderId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Order>()
+                   .HasMany(o => o.OrderItems)
+                   .WithOne(oi => oi.Order)
+                   .HasForeignKey(oi => oi.OrderId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
-            // Relacja między OrderItem i Product
+            // Relacja między OrderItem a Product
             modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.Product)
                 .WithMany(p => p.OrderItems)
                 .HasForeignKey(oi => oi.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Klucz złożony w OrderItem (jeśli potrzebny)
+            // Klucz złożony w OrderItem
             modelBuilder.Entity<OrderItem>()
                 .HasKey(oi => new { oi.OrderId, oi.ProductId });
         }

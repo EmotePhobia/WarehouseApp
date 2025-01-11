@@ -1,0 +1,79 @@
+﻿@model WarehouseApp.Models.Order
+
+@{
+        ViewData["Title"] = "Order Details";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <strong>Order Date:</strong> @Model.OrderDate
+</div>
+<div>
+    <strong>Status:</strong> @Model.Status
+    @if (User.IsInRole("Admin"))
+    {
+        <form method="post" asp-action="ChangeStatus" asp-route-id="@Model.OrderId">
+            <div class="form-group">
+                <label>Status:</label><br />
+                <label>
+                    <input type="radio" name="status" value="Pending" @(Model.Status == "Pending" ? "checked" : "") />
+                    Pending
+                </label>
+
+                <label>
+                    <input type="radio" name="status" value="Completed" @(Model.Status == "Completed" ? "checked" : "") />
+                    Completed
+                </label>
+
+                <label>
+                    <input type="radio" name="status" value="Cancelled" @(Model.Status == "Cancelled" ? "checked" : "") />
+                    Cancelled
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Change Status</button>
+        </form>
+    }
+</div>
+<div>
+    <strong>Customer:</strong> @Model.IdentityUser.UserName
+</div>
+
+<h3>Order Items</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.OrderItems != null && Model.OrderItems.Count > 0)
+        {
+            @foreach (var item in Model.OrderItems)
+            {
+                <tr>
+                    <td>@item.Product?.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice</td>
+                    <td>@(item.Quantity * item.UnitPrice)</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">No items in this order.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <strong>Total Amount:</strong> @Model.OrderItems?.Sum(oi => oi.Quantity * oi.UnitPrice)
+</div>
+
+<a href="@Url.Action("Index", "Orders")" class="btn btn-secondary">Back to Orders</a>

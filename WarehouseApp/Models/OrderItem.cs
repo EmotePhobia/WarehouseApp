@@ -22,10 +22,10 @@ namespace WarehouseApp.Models
         [Range(1, int.MaxValue)]
         public int Quantity { get; set; }
 
-        [Required]
+        
         [Column(TypeName = "decimal(10,2)")]
         public decimal UnitPrice { get; set; }
 
-        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }

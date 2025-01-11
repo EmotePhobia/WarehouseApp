@@ -12,8 +12,8 @@ using WarehouseApp.Data;
 namespace WarehouseApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250109215426_Initial")]
-    partial class Initial
+    [Migration("20250111000622_InitialCrate")]
+    partial class InitialCrate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -105,10 +105,12 @@ namespace WarehouseApp.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -145,10 +147,12 @@ namespace WarehouseApp.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -271,9 +275,6 @@ namespace WarehouseApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime");
 
@@ -281,12 +282,16 @@ namespace WarehouseApp.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(15)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -296,10 +301,13 @@ namespace WarehouseApp.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("OrderItemOrderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("OrderItemProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -308,11 +316,11 @@ namespace WarehouseApp.Migrations
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(10,2)");
 
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("OrderItemOrderId");
+                    b.HasKey("OrderId", "ProductId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("OrderItemOrderId", "OrderItemProductId");
 
                     b.ToTable("OrderItems");
                 });
@@ -404,9 +412,13 @@ namespace WarehouseApp.Migrations
 
             modelBuilder.Entity("WarehouseApp.Models.Order", b =>
                 {
-                    b.HasOne("WarehouseApp.Models.Customer", null)
+                    b.HasOne("WarehouseApp.Models.Customer", "IdentityUser")
                         .WithMany("Orders")
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IdentityUser");
                 });
 
             modelBuilder.Entity("WarehouseApp.Models.OrderItem", b =>
@@ -417,15 +429,15 @@ namespace WarehouseApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WarehouseApp.Models.OrderItem", null)
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderItemOrderId");
-
                     b.HasOne("WarehouseApp.Models.Product", "Product")
                         .WithMany("OrderItems")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("WarehouseApp.Models.OrderItem", null)
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderItemOrderId", "OrderItemProductId");
 
                     b.Navigation("Order");
 
@@ -435,12 +447,17 @@ namespace WarehouseApp.Migrations
             modelBuilder.Entity("WarehouseApp.Models.Product", b =>
                 {
                     b.HasOne("WarehouseApp.Models.Category", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("WarehouseApp.Models.Category", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("WarehouseApp.Models.Customer", b =>
